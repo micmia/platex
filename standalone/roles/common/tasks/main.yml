@@ -1,0 +1,17 @@
+- name: Ensure ntp is installed
+  apt:
+    name: ntp
+    state: present
+    update_cache: yes
+  tags: ntp
+
+- name: Set timezone
+  timezone:
+    name: "{{ ntp_timezone }}"
+
+- name: Ensure user vagrant is in group www-data
+  user:
+    name: vagrant
+    groups: www-data
+    append: yes
+  when: "'development' in group_names"
