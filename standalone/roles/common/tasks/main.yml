@@ -1,3 +1,4 @@
+---
 - name: Ensure ntp is installed
   apt:
     name: ntp

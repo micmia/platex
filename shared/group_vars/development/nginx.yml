@@ -1,0 +1,54 @@
+---
+nginx_access_log: "/var/log/nginx/access.log main buffer=32k"
+nginx_error_log: "/var/log/nginx/error.log warn"
+nginx_remove_default_vhost: true
+nginx_sendfile: "off"
+nginx_vhosts:
+- listen: "80"
+  server_name: "_"
+  index: "index.html index.htm index.php"
+  extra_parameters: |
+    location /phpmyadmin {
+      root /usr/share;
+      index index.php index.html index.htm;
+      location ~ ^/phpmyadmin/(.+\.php)$ {
+        try_files $uri =404;
+        root /usr/share;
+        fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+        fastcgi_index index.php;
+        fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+        fastcgi_read_timeout 3600;
+        include fastcgi_params;
+      }
+      location ~* ^/phpmyadmin/(.+\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))$ {
+        root /usr/share;
+      }
+    }
+- listen: "80"
+  server_name: "example.com"
+  filename: "example.com.conf"
+  root: "/home/vagrant/www/example.com"
+  index: "index.html index.htm index.php"
+  charset: "utf-8"
+  extra_parameters: |
+    location / {
+      try_files $uri $uri/ /index.php?$query_string;
+    }
+
+    location = /favicon.ico { access_log off; log_not_found off; }
+    location = /robots.txt  { access_log off; log_not_found off; }
+
+    error_page 404 /index.php;
+
+    location ~ \.php$ {
+      fastcgi_split_path_info ^(.+\.php)(/.+)$;
+      fastcgi_pass unix:/run/php/php7.0-fpm.sock;
+      fastcgi_index index.php;
+      fastcgi_param SCRIPT_FILENAME $document_root$fastcgi_script_name;
+      fastcgi_read_timeout 3600;
+      include fastcgi_params;
+    }
+
+    location ~ /\.(?!well-known).* {
+      deny all;
+    }

@@ -1,0 +1,19 @@
+---
+site: example.com
+repo: git@github.com:micmia/Spoon-Knife.git
+www_root: /var/www
+web_user: web
+web_group: www-data
+users:
+- name: "{{ web_user }}"
+  groups:
+  - "{{ web_group }}"
+  - sudo
+  keys:
+  - "{{ lookup('file', '~/.ssh/id_rsa.pub') }}"
+  - https://github.com/micmia.keys
+
+apache_listen_port: 80
+apache_vhosts:
+- servername: "{{ site }}"
+  documentroot: "{{ www_root }}/{{ site }}"

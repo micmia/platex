@@ -1,0 +1,43 @@
+---
+- name: Initialize the deploy root and gather facts
+  deploy_helper:
+    path: "{{ project_root }}"
+    shared_path: "{{ project_root }}/shared"
+    current_path: "{{ project_root }}/current"
+
+- name: Clone the project to the new release folder
+  git:
+    repo: "{{ repo }}"
+    dest: "{{ deploy_helper.new_release_path }}"
+    version: master
+    accept_hostkey: yes
+
+- name: Add an unfinished file, to allow cleanup on successful finalize
+  file:
+    path: "{{ deploy_helper.new_release_path }}/{{ deploy_helper.unfinished_filename }}"
+    state: touch
+
+- name: Create some folders in the shared folder
+  file:
+    path: "{{ deploy_helper.shared_path }}/{{ item }}"
+    owner: "{{ web_user }}"
+    group: "{{ web_group }}"
+    state: directory
+    mode: 0775
+  with_items:
+  - uploads
+
+- name: Add symlinks from the new release to the shared folder
+  file:
+    path: "{{ deploy_helper.new_release_path }}/{{ item.path }}"
+    src: "{{ deploy_helper.shared_path }}/{{ item.src }}"
+    state: link
+  with_items:
+  - path: uploads
+    src: uploads
+
+- name: Finalize the deploy, removing the unfinished file and switching the symlink
+  deploy_helper:
+    path: "{{ project_root }}"
+    release: "{{ deploy_helper.new_release }}"
+    state: finalize

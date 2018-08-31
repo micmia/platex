@@ -1,0 +1,19 @@
+---
+php_version: "7.0"
+php_webserver_daemon: "nginx"
+php_fpm_daemon: "php7.0-fpm"
+php_memory_limit: "128M"
+php_max_execution_time: "300"
+php_upload_max_filesize: "128M"
+php_post_max_size: "128M"
+php_date_timezone: "{{ ntp_timezone }}"
+php_packages:
+- php7.0-common
+- php7.0-cli
+- php7.0-dev
+- php7.0-fpm
+- php7.0-gd
+- php7.0-mbstring
+- php7.0-pdo
+- php7.0-xml
+- php7.0-zip
