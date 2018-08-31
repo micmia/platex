@@ -1,5 +1,5 @@
 ---
-site: example.com
+site: staging.example.com
 repo: git@github.com:micmia/Spoon-Knife.git
 www_root: /var/www
 web_user: web
@@ -14,6 +14,15 @@ users:
   - https://github.com/micmia.keys
 
 apache_listen_port: 80
+apache_vhosts_filename: "{{ site }}.conf"
 apache_vhosts:
 - servername: "{{ site }}"
-  documentroot: "{{ www_root }}/{{ site }}"
+  documentroot: "{{ www_root }}/{{ site }}/current"
+  extra_parameters: |+
+
+    ErrorLog ${APACHE_LOG_DIR}/error.log
+    CustomLog ${APACHE_LOG_DIR}/access.log combined
+
+    <IfModule mod_dir.c>
+      DirectoryIndex index.php index.pl index.cgi index.html index.xhtml index.htm
+    </IfModule>

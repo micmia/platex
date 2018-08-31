@@ -1,3 +1,5 @@
+{{ apache_global_vhost_settings }}
+
 {# Set up VirtualHosts #}
 {% for vhost in apache_vhosts %}
 <VirtualHost {{ apache_listen_ip }}:{{ apache_listen_port }}>
@@ -25,7 +27,7 @@
   </Directory>
 {% endif %}
 {% if vhost.extra_parameters is defined %}
-  {{ vhost.extra_parameters|indent(width=2) }}
+  {{ vhost.extra_parameters }}
 {% endif %}
 </VirtualHost>
 
