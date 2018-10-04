@@ -1,4 +1,3 @@
----
 site: staging.example.com
 repo: git@github.com:micmia/Spoon-Knife.git
 www_root: /var/www
